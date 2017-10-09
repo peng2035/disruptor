@@ -56,7 +56,7 @@ public final class MultiProducerSequencer extends AbstractSequencer
         availableBuffer = new int[bufferSize];
         indexMask = bufferSize - 1;
         indexShift = Util.log2(bufferSize);
-        initialiseAvailableBuffer();
+        initialiseAvailableBuffer();//设置 available buffer 数组的值均为1
     }
 
     /**
@@ -259,7 +259,9 @@ public final class MultiProducerSequencer extends AbstractSequencer
     private void setAvailableBufferValue(int index, int flag)
     {
         long bufferAddress = (index * SCALE) + BASE;
-        UNSAFE.putOrderedInt(availableBuffer, bufferAddress, flag);
+        UNSAFE.putOrderedInt(availableBuffer, bufferAddress, flag);//todo 不明白为什么
+        //参考Atomic Integer的lazy set https://stackoverflow.com/questions/1468007/atomicinteger-lazyset-vs-set
+        //基础类型应该不存在gc问题，需要解决一下
     }
 
     /**
